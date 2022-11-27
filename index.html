@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"
+      integrity="sha512-iWPnCISAd/J+ZacwV2mbNLCaPGRrRo5OS81lKTVPtRg1wGTC20Cfmp5Us5RcbLv42QLdbAWl0MI57yox5VecQg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script type="text/javascript">
+      window.addEventListener("load", () => {
+
+        const userName = prompt("What your name?", "Anonym")
+        const socket = io();
+        const form = document.getElementById("form");
+        const input = document.getElementById("input");
+        const messages = document.getElementById('messages')
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          if (input.value) {
+            socket.emit("chat_message", { message: input.value, userName });
+            input.value = "";
+          }
+        });
+        socket.on("chat_update", ({message, userName})=>{
+            const item = document.createElement('li')
+            item.innerHTML = `${userName}: ${message}`
+            messages.appendChild(item)
+
+            window.scrollTo(0, document.body.scrollHeight)
+        })
+      });
+    </script>
+    <style>
+      form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+      }
+      input {
+        border: none;
+        padding: 0 1rem;
+        border-radius: 0.2rem;
+        flex-grow: 1;
+      }
+      input:focus {
+        outline: none;
+      }
+      form > button {
+        background: #333;
+        border: none;
+        padding: 0 1 rem;
+        color: aliceblue;
+      }
+      #messages {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages > li {
+        padding: 0.5rem 1rem;
+      }
+      #messages > li:nth-child(odd) {
+        background: #efefef;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" />
+      <button>отправить</button>
+    </form>
+  </body>
+</html>
